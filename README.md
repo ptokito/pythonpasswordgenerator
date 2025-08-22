@@ -1,5 +1,5 @@
 # Password Generator
-
+new update
 A secure password generator web application with a modern terminal-style interface.
 
 ## Features

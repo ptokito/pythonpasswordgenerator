@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #000;
+            color: #00ff00;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 2rem auto;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
+            to { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; }
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #00cc00;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .generator-box {
+            background-color: #0a0a0a;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        button {
+            background-color: #00ff00;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        button:hover {
+            background-color: #00cc00;
+            box-shadow: 0 0 15px #00ff00;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #copyButton {
+            background-color: #0088ff;
+        }
+
+        #copyButton:hover {
+            background-color: #0066cc;
+            box-shadow: 0 0 15px #0088ff;
+        }
+
+        #copyButton.copied {
+            background-color: #00ff00;
+        }
+
+        .password-display {
+            background-color: #111;
+            border: 1px solid #00ff00;
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        #password {
+            font-size: 1.5rem;
+            color: #00ff00;
+            letter-spacing: 2px;
+            word-break: break-all;
+            font-weight: bold;
+        }
+
+        .about-section {
+            background-color: #0a0a0a;
+            border: 1px solid #00ff00;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+        }
+
+        .about-section h2 {
+            color: #00ff00;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .about-section p {
+            color: #00cc00;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #00ff00;
+            color: #000;
+            padding: 15px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .button-container {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Password Generator</h1>
+        <p class="subtitle">Generate a 12-character long password with 3 special characters.</p>
+        
+        <div class="generator-box">
+            <div class="button-container">
+                <button id="generateButton">Generate Password</button>
+                <button id="copyButton">Copy to Clipboard</button>
+            </div>
+            
+            <div class="password-display">
+                <span id="password">Click Generate to create password</span>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>About Me</h2>
+            <p>
+                In the digital age, having a strong password is crucial for protecting your personal information and accounts from unauthorized access. A strong password can help prevent hacking attempts and safeguard your online identity.
+            </p>
+            <p>
+                A strong password typically includes a mix of uppercase and lowercase letters, numbers, and special characters. It should be long enough (at least 12 characters) to make it difficult for attackers to crack using brute-force methods. Avoid using easily guessable information like your name, birthdate, or common words in your password.
+            </p>
+            <p>
+                Our Password Generator helps you create a secure password by generating a 12-character long password with 3 special characters. Stay secure online with a strong password!
+            </p>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">Password copied to clipboard!</div>
+
+    <script>
+        let currentPassword = '';
+
+        document.getElementById('generateButton').addEventListener('click', generatePassword);
+        document.getElementById('copyButton').addEventListener('click', copyPassword);
+
+        // Generate password on page load
+        generatePassword();
+
+        async function generatePassword() {
+            try {
+                const response = await fetch('/generate');
+                const data = await response.json();
+                currentPassword = data.password;
+                document.getElementById('password').textContent = currentPassword;
+                
+                // Visual feedback
+                const display = document.querySelector('.password-display');
+                display.style.animation = 'none';
+                setTimeout(() => {
+                    display.style.animation = 'glow 0.5s ease';
+                }, 10);
+            } catch (error) {
+                console.error('Error generating password:', error);
+                currentPassword = generatePasswordLocal();
+                document.getElementById('password').textContent = currentPassword;
+            }
+        }
+
+        function generatePasswordLocal() {
+            const length = 12;
+            const specialCount = 3;
+            
+            const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+            const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const numbers = '0123456789';
+            const special = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            const allChars = lowercase + uppercase + numbers + special;
+            
+            let password = [];
+            
+            // Add special characters
+            for (let i = 0; i < specialCount; i++) {
+                password.push(special.charAt(Math.floor(Math.random() * special.length)));
+            }
+            
+            // Add at least one of each type
+            password.push(lowercase.charAt(Math.floor(Math.random() * lowercase.length)));
+            password.push(uppercase.charAt(Math.floor(Math.random() * uppercase.length)));
+            password.push(numbers.charAt(Math.floor(Math.random() * numbers.length)));
+            
+            // Fill the rest
+            for (let i = password.length; i < length; i++) {
+                password.push(allChars.charAt(Math.floor(Math.random() * allChars.length)));
+            }
+            
+            // Shuffle
+            for (let i = password.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [password[i], password[j]] = [password[j], password[i]];
+            }
+            
+            return password.join('');
+        }
+
+        async function copyPassword() {
+            if (!currentPassword || currentPassword === 'Click Generate to create password') {
+                generatePassword();
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(currentPassword);
+                showNotification();
+                
+                // Change button temporarily
+                const copyBtn = document.getElementById('copyButton');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy password:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = currentPassword;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification();
+            }
+        }
+
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

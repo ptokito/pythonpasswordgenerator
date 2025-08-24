@@ -154,188 +154,25 @@ object DeployToRender : BuildType({
         script {
             name = "Trigger Render Deployment"
             scriptContent = """
-                # Call Render deploy hook using secure parameter (not visible in logs)
-                response=${'
-
-        // Step 2: Brief wait and status message
-        script {
-            name = "Verify Deployment"
-            scriptContent = """
-                sleep 10  # Wait for deployment to initialize
-                echo "Deployment triggered. Check Render dashboard for status."
-            """.trimIndent()
-        }
-    }
-
-    // Define parameter as password type to hide it in UI and logs
-    params {
-        password("env.RENDER_DEPLOY_HOOK", "",
-                 label = "Render Deploy Hook",
-                 description = "Render.com deployment webhook URL (stored securely)",
-                 display = ParameterDisplay.HIDDEN)
-    }
-})}(curl -X POST \
+                # Deploy to Render using webhook
+                response=${'$'}(curl -X POST \
                     -w "\nHTTP_STATUS:%{http_code}" \
                     -s \
-                    "%env.RENDER_DEPLOY_HOOK%")
+                    "https://api.render.com/deploy/srv-d2k74c2li9vc73e11t5g?key=08HXHBhaTvQ")
 
                 # Extract HTTP status code from response
-                http_status=${'
+                http_status=${'$'}(echo "${'$'}response" | grep "HTTP_STATUS" | cut -d: -f2)
+                # Extract response body
+                body=${'$'}(echo "${'$'}response" | grep -v "HTTP_STATUS")
 
-        // Step 2: Brief wait and status message
-        script {
-            name = "Verify Deployment"
-            scriptContent = """
-                sleep 10  # Wait for deployment to initialize
-                echo "Deployment triggered. Check Render dashboard for status."
-            """.trimIndent()
-        }
-    }
-
-    // Store deploy hook as parameter for easy configuration
-    params {
-        param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2k74c2li9vc73e11t5g?key=08HXHBhaTvQ")
-    }
-})}(echo "${'
-
-        // Step 2: Brief wait and status message
-        script {
-            name = "Verify Deployment"
-            scriptContent = """
-                sleep 10  # Wait for deployment to initialize
-                echo "Deployment triggered. Check Render dashboard for status."
-            """.trimIndent()
-        }
-    }
-
-    // Store deploy hook as parameter for easy configuration
-    params {
-        param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2k74c2li9vc73e11t5g?key=08HXHBhaTvQ")
-    }
-})}response" | grep "HTTP_STATUS" | cut -d: -f2)
-                # Extract response body (without exposing the URL)
-                body=${'
-
-        // Step 2: Brief wait and status message
-        script {
-            name = "Verify Deployment"
-            scriptContent = """
-                sleep 10  # Wait for deployment to initialize
-                echo "Deployment triggered. Check Render dashboard for status."
-            """.trimIndent()
-        }
-    }
-
-    // Store deploy hook as parameter for easy configuration
-    params {
-        param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2k74c2li9vc73e11t5g?key=08HXHBhaTvQ")
-    }
-})}(echo "${'
-
-        // Step 2: Brief wait and status message
-        script {
-            name = "Verify Deployment"
-            scriptContent = """
-                sleep 10  # Wait for deployment to initialize
-                echo "Deployment triggered. Check Render dashboard for status."
-            """.trimIndent()
-        }
-    }
-
-    // Store deploy hook as parameter for easy configuration
-    params {
-        param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2k74c2li9vc73e11t5g?key=08HXHBhaTvQ")
-    }
-})}response" | grep -v "HTTP_STATUS")
-
-                echo "Response: ${'
-
-        // Step 2: Brief wait and status message
-        script {
-            name = "Verify Deployment"
-            scriptContent = """
-                sleep 10  # Wait for deployment to initialize
-                echo "Deployment triggered. Check Render dashboard for status."
-            """.trimIndent()
-        }
-    }
-
-    // Store deploy hook as parameter for easy configuration
-    params {
-        param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2k74c2li9vc73e11t5g?key=08HXHBhaTvQ")
-    }
-})}body"
+                echo "Response: ${'$'}body"
 
                 # Check if deployment was triggered successfully (2xx status codes)
-                if [ "${'
-
-        // Step 2: Brief wait and status message
-        script {
-            name = "Verify Deployment"
-            scriptContent = """
-                sleep 10  # Wait for deployment to initialize
-                echo "Deployment triggered. Check Render dashboard for status."
-            """.trimIndent()
-        }
-    }
-
-    // Store deploy hook as parameter for easy configuration
-    params {
-        param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2k74c2li9vc73e11t5g?key=08HXHBhaTvQ")
-    }
-})}http_status" -eq 200 ] || [ "${'
-
-        // Step 2: Brief wait and status message
-        script {
-            name = "Verify Deployment"
-            scriptContent = """
-                sleep 10  # Wait for deployment to initialize
-                echo "Deployment triggered. Check Render dashboard for status."
-            """.trimIndent()
-        }
-    }
-
-    // Store deploy hook as parameter for easy configuration
-    params {
-        param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2k74c2li9vc73e11t5g?key=08HXHBhaTvQ")
-    }
-})}http_status" -eq 201 ] || [ "${'
-
-        // Step 2: Brief wait and status message
-        script {
-            name = "Verify Deployment"
-            scriptContent = """
-                sleep 10  # Wait for deployment to initialize
-                echo "Deployment triggered. Check Render dashboard for status."
-            """.trimIndent()
-        }
-    }
-
-    // Store deploy hook as parameter for easy configuration
-    params {
-        param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2k74c2li9vc73e11t5g?key=08HXHBhaTvQ")
-    }
-})}http_status" -eq 202 ]; then
+                if [ "${'$'}http_status" -eq 200 ] || [ "${'$'}http_status" -eq 201 ] || [ "${'$'}http_status" -eq 202 ]; then
                     echo "✓ Deployment triggered successfully"
                     exit 0
                 else
-                    echo "✗ Deployment failed with status: ${'
-
-        // Step 2: Brief wait and status message
-        script {
-            name = "Verify Deployment"
-            scriptContent = """
-                sleep 10  # Wait for deployment to initialize
-                echo "Deployment triggered. Check Render dashboard for status."
-            """.trimIndent()
-        }
-    }
-
-    // Store deploy hook as parameter for easy configuration
-    params {
-        param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2k74c2li9vc73e11t5g?key=08HXHBhaTvQ")
-    }
-})}http_status"
+                    echo "✗ Deployment failed with status: ${'$'}http_status"
                     exit 1  # Fail the build if deployment trigger fails
                 fi
             """.trimIndent()
@@ -349,10 +186,5 @@ object DeployToRender : BuildType({
                 echo "Deployment triggered. Check Render dashboard for status."
             """.trimIndent()
         }
-    }
-
-    // Store deploy hook as parameter for easy configuration
-    params {
-        param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2k74c2li9vc73e11t5g?key=08HXHBhaTvQ")
     }
 })
